@@ -896,7 +896,7 @@ def isomeric_transition_load_from_iaea_website(a, rad_name):
         df2 = lc_read_csv(url)
         if not df2.empty:
             # Identify overlapping columns
-            overlapping_columns = df.columns.intersection(df2.columns)
+            overlapping_columns = df.columns.plane_intersection(df2.columns)
 
             # Convert columns in df2 to the same type as df1
             for col in overlapping_columns:
@@ -963,7 +963,7 @@ def isomeric_transition_load_all_gammas(nuclide: rd.Nuclide, half_life=None):
 
 def isomeric_transition_read_g4_data(z, a, ignore_zero_deex=True):
     # get folder
-    data_paths = g4.get_G4_data_paths()
+    data_paths = g4.get_g4_data_paths()
     folder = pathlib.Path(data_paths["G4LEVELGAMMADATA"])
     ion_filename = folder / f"z{z}.a{a}"
     with open(ion_filename) as file:

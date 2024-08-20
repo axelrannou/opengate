@@ -6,6 +6,8 @@ import time
 import pathlib
 import click
 import random
+import sys
+import json
 
 from opengate.exception import fatal, colored, color_ok, color_error
 from opengate_core.testsDataSetup import check_tests_data_folder
@@ -24,16 +26,18 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 )
 def go(test_id, random_tests):
     pathFile = pathlib.Path(__file__).parent.resolve()
-    if "src" in os.listdir(pathFile):
-        mypath = os.path.join(pathFile, "../tests/src")
+    if "src" in pathFile.iterdir():
+        mypath = pathFile.parent / "tests" / "src"
     else:
         import opengate.tests
 
-        mypath = os.path.join(
-            pathlib.Path(opengate.tests.__file__).resolve().parent, "../tests/src"
+        mypath = (
+            pathlib.Path(opengate.tests.__file__).resolve().parent.parent
+            / "tests"
+            / "src"
         )
 
-    print("Looking for tests in: " + mypath)
+    print("Looking for tests in: " + str(mypath))
 
     if not check_tests_data_folder():
         return False
@@ -60,17 +64,9 @@ def go(test_id, random_tests):
 
     ignored_tests = [
         "test045_speedup",  # this is a binary (still work in progress)
-        "test066_spect_gaga_garf_0_orientation.py",  # ignored because visu only
-        "test066_spect_gaga_garf_1_reference.py",  # ignored because reference data (too long)
-        "test066_spect_gaga_garf_2.py",  # ignored because reference data (too long, GPU)
-        "test066_spect_gaga_garf_3_standalone.py",  # ignored because too long (GPU)
-        "test066_spect_gaga_garf_4_analyse1.py",
-        "test066_spect_gaga_garf_5_analyse2.py",
     ]
 
-    onlyfiles = [
-        f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))
-    ]
+    onlyfiles = [f for f in os.listdir(str(mypath)) if (mypath / f).is_file()]
 
     files = []
     for f in onlyfiles:
@@ -105,6 +101,9 @@ def go(test_id, random_tests):
         files.append(f)
 
     files = sorted(files)
+    dictFiles = {}
+    for file in files:
+        dictFiles[file] = [""]
     if test_id != "all":
         test_id = int(test_id)
         files_new = []
@@ -122,19 +121,20 @@ def go(test_id, random_tests):
         files = sorted(files)
 
     print(f"Running {len(files)} tests")
-    print(f"-" * 70)
+    print("-" * 70)
 
     failure = False
 
     for f in files:
         start = time.time()
         print(f"Running: {f:<46}  ", end="")
-        cmd = "python " + os.path.join(mypath, f"{f}")
-        log = os.path.join(os.path.dirname(mypath), f"log/{f}.log")
+        cmd = "python " + str(mypath / f)
+        log = str(mypath.parent / "log" / f) + ".log"
         r = os.system(f"{cmd} > {log} 2>&1")
         # subprocess.run(cmd, stdout=f, shell=True, check=True)
         if r == 0:
             print(colored.stylize(" OK", color_ok), end="")
+            dictFiles[f] = [True]
         else:
             if r == 2:
                 # this is probably a Ctrl+C, so we stop
@@ -143,9 +143,21 @@ def go(test_id, random_tests):
                 print(colored.stylize(" FAILED !", color_error), end="")
                 failure = True
                 os.system("cat " + log)
+                dictFiles[f] = [False]
         end = time.time()
         print(f"   {end - start:5.1f} s     {log:<65}")
 
+    outputJsonFile = (
+        "results_"
+        + sys.platform
+        + "_"
+        + str(sys.version_info[0])
+        + "."
+        + str(sys.version_info[1])
+        + ".json"
+    )
+    with open(outputJsonFile, "w") as fp:
+        json.dump(dictFiles, fp, indent=4)
     print(not failure)
 
 

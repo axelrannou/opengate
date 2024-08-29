@@ -22,7 +22,7 @@ public:
   // Store the global orientation that may be applied to the direction
   // in the GenerateOne function.
   // (Must be updated each run)
-  bool fDirectionRelativeToVolume;
+  bool fDirectionRelativeToAttachedVolume;
   G4ThreeVector fGlobalTranslation;
   G4RotationMatrix fGlobalRotation;
 };

@@ -29,7 +29,7 @@ GateGenericSource::GateGenericSource() : GateVSource() {
   fParticleDefinition = nullptr;
   fEffectiveEventTime = -1;
   fEffectiveEventTime = -1;
-  fDirectionRelativeToVolume = false;
+  fDirectionRelativeToAttachedVolume = false;
   fUserParticleLifeTime = -1;
   fBackToBackMode = false;
 }
@@ -92,8 +92,8 @@ void GateGenericSource::InitializeUserInfo(py::dict &user_info) {
   fCurrentSkippedEvents = 0;
   fTotalSkippedEvents = 0;
   fEffectiveEventTime = -1;
-  fDirectionRelativeToVolume =
-      DictGetBool(user_info, "direction_relative_to_volume");
+  fDirectionRelativeToAttachedVolume =
+      DictGetBool(user_info, "direction_relative_to_attached_volume");
 }
 
 void GateGenericSource::UpdateActivity(double time) {
@@ -183,20 +183,20 @@ void GateGenericSource::PrepareNextRun() {
   // For the direction, the orientation may or may not be
   // relative to the volume according to user option
   auto *ang = fSPS->GetAngDist();
-  ang->fDirectionRelativeToVolume = fDirectionRelativeToVolume;
+  ang->fDirectionRelativeToAttachedVolume = fDirectionRelativeToAttachedVolume;
   ang->fGlobalRotation = l.fGlobalRotation;
   ang->fGlobalTranslation = l.fGlobalTranslation;
-  if (fangType == "momentum" && fDirectionRelativeToVolume) {
+  if (fangType == "momentum" && fDirectionRelativeToAttachedVolume) {
     auto new_d = rotation * fInitializeMomentum;
     ang->SetParticleMomentumDirection(new_d);
-    ang->fDirectionRelativeToVolume = false;
+    ang->fDirectionRelativeToAttachedVolume = false;
   }
-  if (fangType == "focused" && fDirectionRelativeToVolume) {
+  if (fangType == "focused" && fDirectionRelativeToAttachedVolume) {
     auto vec_f = fInitiliazeFocusPoint - fInitTranslation;
     auto rot_f = rotation * vec_f;
     auto new_f = rot_f + l.fGlobalTranslation;
     ang->SetFocusPoint(new_f);
-    ang->fDirectionRelativeToVolume = false;
+    ang->fDirectionRelativeToAttachedVolume = false;
   }
 }
 

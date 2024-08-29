@@ -324,7 +324,11 @@ class GenericSource(SourceBase):
         user_info.user_particle_life_time = -1  # negative means : by default
         user_info.tac_times = None
         user_info.tac_activities = None
+<<<<<<< HEAD
         user_info.direction_relative_to_volume = False
+=======
+        user_info.direction_relative_to_attached_volume = False
+>>>>>>> 9e56ef364697f72a22ff0629be0dfcfe50747907
 
         # ion
         user_info.ion = Box()

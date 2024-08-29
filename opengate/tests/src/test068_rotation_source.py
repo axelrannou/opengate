@@ -74,7 +74,11 @@ if __name__ == "__main__":
     source1.mother = plan.name
     source1.position.size = [10 * cm, 10 * cm, 1 * nm]
     source1.direction.type = "momentum"
+<<<<<<< HEAD
     source1.direction_relative_to_volume = True
+=======
+    source1.direction_relative_to_attached_volume = True
+>>>>>>> 9e56ef364697f72a22ff0629be0dfcfe50747907
     # source1.direction.focus_point = [0*cm, 0*cm, -5 *cm]
     source1.direction.momentum = [0, 0, -1]
     source1.energy.type = "mono"
@@ -87,7 +91,11 @@ if __name__ == "__main__":
     source2.mother = plan.name
     source2.position.size = [10 * cm, 10 * cm, 1 * nm]
     source2.direction.type = "focused"
+<<<<<<< HEAD
     source2.direction_relative_to_volume = True
+=======
+    source2.direction_relative_to_attached_volume = True
+>>>>>>> 9e56ef364697f72a22ff0629be0dfcfe50747907
     source2.direction.focus_point = [0 * cm, 0 * cm, -5 * cm]
     # source1.direction.momentum = [0, 0, -1]
     source2.energy.type = "mono"
@@ -103,7 +111,11 @@ if __name__ == "__main__":
     source3.direction.type = "iso"
     source3.direction.theta = [0 * deg, 10 * deg]
     source3.direction.phi = [0 * deg, 360 * deg]
+<<<<<<< HEAD
     source3.direction_relative_to_volume = True
+=======
+    source3.direction_relative_to_attached_volume = True
+>>>>>>> 9e56ef364697f72a22ff0629be0dfcfe50747907
     source3.energy.type = "mono"
     source3.energy.mono = 1 * MeV
     source3.activity = n * Bq / sim.number_of_threads

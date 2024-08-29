@@ -11,7 +11,7 @@
 G4ThreeVector GateSPSAngDistribution::VGenerateOne() {
   // return GenerateOne();
   auto direction = GenerateOne();
-  if (fDirectionRelativeToVolume) {
+  if (fDirectionRelativeToAttachedVolume) {
     direction = direction / direction.mag();
     direction = fGlobalRotation * direction;
   }
